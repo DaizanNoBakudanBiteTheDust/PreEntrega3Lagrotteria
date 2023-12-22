@@ -5,7 +5,8 @@ import local from 'passport-local';
 import usersModel from '../dao/dbManagers/models/users.models.js';
 import { createHash, isValidPassword } from '../utils.js';
 import {passportStrategiesEnum, accessRolesEnum} from '../config/enums.js';
-import {PRIVATE_KEY_JWT} from '../config/constants.js';
+import configs from '../config.js';
+
 
 // estrategia JWT
 
@@ -100,7 +101,7 @@ const initializePassport = () => {
 
     passport.use(passportStrategiesEnum.JWT, new JWTSrategy({
         jwtFromRequest: cookieExtractor,
-        secretOrKey: PRIVATE_KEY_JWT
+        secretOrKey: configs.privateJwt
     }, async(jwt_payload, done) => {
         try {
             return done(null, jwt_payload.user)//req.user

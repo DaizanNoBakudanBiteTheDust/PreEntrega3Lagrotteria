@@ -1,7 +1,14 @@
 import path from 'path';
-import { __dirname } from './utils.js';
+import {
+    dirname,
+} from 'path';
+import {
+    fileURLToPath
+} from 'url';
+
 import dotenv from 'dotenv';
 import { Command } from 'commander';
+
 
 const program = new Command();
 // CREO ESTO NO ES NECESARIO LO DE VARIANTE DE AMBIENTE
@@ -9,6 +16,10 @@ program.option('variable de ambiente');
 program.parse();
 
 //PATH AL ENV
+
+const __filename = fileURLToPath(
+    import.meta.url);
+const __dirname = dirname(__filename);
 
 const envPath = path.resolve(__dirname, '../.env');
 
