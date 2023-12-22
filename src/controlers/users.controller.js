@@ -10,6 +10,7 @@ import {
 } from '../utils.js';
 import Users from '../dao/dbManagers/users.manager.js';
 import Carts from '../dao/dbManagers/cart.manager.js';
+import infoDto from '../DTOs/info.dto.js';
 
 const manager = new Users();
 const cartManager = new Carts();
@@ -147,10 +148,24 @@ const userGithubCallback = async (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-    // Si el middleware de autenticación JWT pasa, req.user contendrá la información del usuario extraída del token
-    res.status(200).json({
-        user: req.user
-    });
+    try {
+        if (!req.user) {
+            return res.status(401).json({ error: 'Usuario no autenticado' });
+        }
+
+        const { first_name, last_name, age } = req.user; // Suponiendo que los datos del usuario están en req.user
+
+        // Verifica si existen name y lastname antes de crear la instancia de infoDto
+        if (!first_name, !last_name) {
+            return res.status(400).json({ error: 'Faltan datos del usuario' });
+        }
+
+        const User = new infoDto({first_name, last_name, age });
+        res.status(200).json({ user: User });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el usuario actual' });
+    }
 };
 
 
