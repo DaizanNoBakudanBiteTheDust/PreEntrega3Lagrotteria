@@ -28,7 +28,6 @@ const adminUser = {
     password: 'adminCod3r123'
 };
 
-
 router.post('/login', loginUser);
 
 
@@ -36,6 +35,9 @@ router.get('/fail-login', userFailLogin);
 
 router.get('/logout', userLogout);
 
+router.get('/current', passport.authenticate('jwt', {
+    session: false
+}), getCurrentUser);
 
 router.get('/:uid', getUserId);
 
@@ -48,8 +50,6 @@ router.get('/github-callback', passport.authenticate('github', {
     scope: ['user:email']
 }), userGithubCallback);
 
-router.get('/current', passport.authenticate('jwt', {
-    session: false
-}), getCurrentUser);
+
 
 export default router;
