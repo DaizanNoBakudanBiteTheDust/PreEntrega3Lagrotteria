@@ -49,6 +49,17 @@ const initializePassport = () => {
         }
     }));
 
+     //serializacion
+
+     passport.serializeUser((user, done) => {
+        done(null, user._id);
+    })
+
+    passport.deserializeUser(async(id, done) => {
+        const user = await usersModel.findById(id);
+        done(null, user);
+        
+    })
 
     const cookieExtractor = req => {
         let token = null;
