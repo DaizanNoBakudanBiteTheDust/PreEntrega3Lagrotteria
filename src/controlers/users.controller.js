@@ -8,18 +8,45 @@ import {
     isValidPassword,
     generateToken
 } from '../utils.js';
-import Users from '../dao/dbManagers/users.manager.js';
-import Carts from '../dao/dbManagers/cart.manager.js';
+import {
+    saveCart
+} from '../services/cart.service.js'
 import infoDto from '../DTOs/info.dto.js';
 
-const manager = new Users();
-const cartManager = new Carts();
-
 const registerUser = async (req, res) => {
-    res.status(201).send({
-        status: 'success',
-        message: 'user registered'
-    });
+    try {
+        const { email, first_name, last_name, age, password } = req.body;
+        const user = await getUserByEmail(email);
+
+        if (user) {
+            return res.status(400).json({ error: 'El usuario ya está registrado' });
+        }
+
+        const userToSave = {
+            first_name,
+            last_name,
+            email,
+            age,
+            password: createHash(password)
+        };
+
+        // Guardar el usuario primero para obtener el _id
+        const result = await saveUser(userToSave);
+
+        // Crear un carrito nuevo para el usuario registrado
+        const cart = await saveCart({ userId: result._id });
+
+        const cartObjectId = cart.cart._id;
+
+
+        // Agrega el carrito recién creado al usuario
+        await cartToUser(result._id, cartObjectId);
+
+        res.status(201).json({ status: 'success', message: 'Usuario registrado exitosamente', user: result });
+    } catch (error) {
+        console.log(error);
+
+    }
 };
 
 const failRegisterUser = async (req, res) => {
@@ -55,28 +82,23 @@ const loginUser = async (req, res) => {
         });
     }
 
-    const user = await getUserByEmail(email);
-    console.log(user);
+     // Verifica que los campos requeridos estén presentes en la petición
 
-    if (!user.carts || user.carts.length === 0) {
-        // Si el usuario no tiene un carrito, crea uno nuevo
-        let cart = await saveUser({
-            userId: user._id
-        });
+    const userNew = await getUserByEmail(email);
 
-        let userCart = cart._id;
-        console.log(userCart)
-        // Agrega el carrito recién creado al usuario
-
-        await cartToUser(user._id, userCart);
-    }
 
     //generar el jwt
     const {
         password: _,
         ...userResult
-    } = user;
+    } = userNew;
     const accessToken = generateToken(userResult);
+
+    console.log(accessToken, userNew)
+
+   
+
+
     res.cookie('coderCookieToken', accessToken, {
         maxAge: 60 * 60 * 1000,
         httpOnly: true

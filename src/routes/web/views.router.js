@@ -4,9 +4,7 @@ import {
 import Products from '../../dao/dbManagers/products.manager.js';
 import Carts from '../../dao/dbManagers/cart.manager.js';
 import Messages from '../../dao/dbManagers/message.manager.js';
-import usersModel from '../../dao/dbManagers/models/users.models.js';
 import passport from 'passport';
-import {passportStrategiesEnum, accessRolesEnum} from '../../config/enums.js';
 import {
     productsModel
 } from "../../dao/dbManagers/models/products.models.js";
@@ -75,7 +73,7 @@ router.get('/', privateAccess, async (req, res) => {
 
         res.render('home', {
             user: userData,
-            cartId: userData.carts[0].cart._id,
+            cartId: userData.carts[0].cart._id,// solo funciona en null por ahora
             products: allProducts
         });
     } catch (error) {

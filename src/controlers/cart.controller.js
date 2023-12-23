@@ -8,7 +8,7 @@ import { getAllCarts,
  } from "../services/cart.service.js";
 
 
-const saveCarts = async (req, res) => {
+ const saveCarts = async (req, res) => {
     try {
             const carts = await getAllCarts();
             // Productos que haremos con Postman

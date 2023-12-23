@@ -6,7 +6,7 @@ export default class Users {
     }
 
     getByEmail = async(email) => {
-        const user = await usersModel.findOne({ email }).lean();
+        const user = await usersModel.findOne({email}).lean();
         return user;
     }
 
@@ -15,15 +15,16 @@ export default class Users {
         return result; 
     }
     
-    addCartToUser = async(userId, cartId) => {
+    addCartToUser = async (userId, cartId) => {
         try {
+            // Buscar al usuario por su ID
             const user = await usersModel.findById(userId);
-
+    
             if (!user) {
                 console.error('Usuario no encontrado');
                 return;
             }
-
+    
             if (!user.carts || user.carts.length === 0) {
                 // Si el usuario no tiene un carrito, crea uno nuevo
                 await usersModel.findByIdAndUpdate(userId, { $push: { carts: { cart: cartId } } }, { new: true });

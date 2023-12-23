@@ -13,8 +13,12 @@ export default class Carts {
     }
 
     save = async (cart) => {
-        const result = await cartsModel.create(cart);
-        return result;
+        try {
+            const result = await cartsModel.create(cart);
+            return { status: 200, message: 'Cart created successfully', cart: result };
+        } catch (error) {
+            return { status: error.status || 500, error: error.message };
+        }
     }
 
     update = async (id, cart) => {

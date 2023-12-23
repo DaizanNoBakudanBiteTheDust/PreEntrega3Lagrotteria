@@ -8,13 +8,12 @@ const getUserByEmail = async (email) => {
     return userEmail;
 }
 
-const saveUser = async () => {
+const saveUser = async (user) => {
     const userCreate = await manager.save(user);
-
     return userCreate;
 }
 
-const cartToUser = async () => {
+const cartToUser = async (userId, cartId) => {
     const cartUser = await manager.addCartToUser(userId, cartId);
 
     return cartUser;

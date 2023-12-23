@@ -27,11 +27,20 @@ dotenv.config({ path: envPath });
 
 // ENVS
 const configs = {
+    //PUERTO
     port: process.env.PORT,
+    //MONGO
     mongoUrl: process.env.MONGO_URL,
+
+    //CLAVES SECRETAS
     secretCookie: process.env.SECRET_COOKIE,
     privateHash: process.env.PRIVATE_KEY_HASH,
-    privateJwt: process.env.PRIVATE_KEY_JWT
+    privateJwt: process.env.PRIVATE_KEY_JWT,
+
+    //github
+    gitClientId: process.env.GITHUB_CLIENT_ID,
+    gitSecret: process.env.GITHUB_CLIENT_SECRET,
+    gitUrl: process.env.GITHUB_URL
 };
 
 

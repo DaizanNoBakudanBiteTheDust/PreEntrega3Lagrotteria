@@ -15,40 +15,11 @@ const JWTSrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
 
 const initializePassport = () => {
-    //registro
-      //registro
-      passport.use('register', new localStrategy({
-        passReqToCallback: true, //permite acceder al objeto request como cualquier otro middleware
-        usernameField: 'email'
-    }, async (req, username, password, done) => {
-        try {
-            const { first_name, last_name, age } = req.body;
-            const user = await usersModel.findOne({ email: username });
-            
-            if(user) {
-                return done(null, false);
-            }
-
-            const userToSave = {
-                first_name,
-                last_name,
-                email: username,
-                age,
-                password: createHash(password)
-            }
-
-            const result = await usersModel.create(userToSave);
-            return done(null, result); //req.user {first,last,age,email}
-        } catch (error) {
-            return done(`Incorrect credentialss`)
-        }
-    }));
-
 
     passport.use('github', new GitHubStrategy({
-        clientID:  'Iv1.da29b1c177ee2618',
-        clientSecret: '0f8c0a891165fcb2a006b0ea1c5f443478e15fba',
-        callbackURL: 'http://localhost:8080/api/sessions/github-callback',
+        clientID:  configs.gitClientId,
+        clientSecret: configs.gitSecret,
+        callbackURL: configs.gitUrl,
         scope:['user:email']
     }, async(accessToken, refreshToken, profile, done) => {
         try {
@@ -77,19 +48,7 @@ const initializePassport = () => {
 
         }
     }));
-    
 
-    //serializacion
-
-    passport.serializeUser((user, done) => {
-        done(null, user._id);
-    })
-
-    passport.deserializeUser(async(id, done) => {
-        const user = await usersModel.findById(id);
-        done(null, user);
-        
-    })
 
     const cookieExtractor = req => {
         let token = null;
