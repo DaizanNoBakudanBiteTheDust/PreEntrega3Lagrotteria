@@ -12,6 +12,7 @@ import {
     saveCart
 } from '../services/cart.service.js'
 import infoDto from '../DTOs/info.dto.js';
+import configs from '../config.js';
 
 const registerUser = async (req, res) => {
     try {
@@ -58,8 +59,8 @@ const failRegisterUser = async (req, res) => {
 
 
 const adminUser = {
-    email: 'adminCoder@coder.com',
-    password: 'adminCod3r123'
+    email: configs.adminUser,
+    password: configs.adminPass
 };
 
 
@@ -69,7 +70,7 @@ const loginUser = async (req, res) => {
         password
     } = req.body;
 
-    if (email === 'adminCoder@coder.com' || password === 'adminCod3r123') {
+    if (email === configs.adminUser || password === configs.adminPass) {
         req.user = {
             name: 'Admin', // O cualquier otro nombre para el administrador
             email: email,

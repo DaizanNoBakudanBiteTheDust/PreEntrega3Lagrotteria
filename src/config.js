@@ -40,7 +40,11 @@ const configs = {
     //github
     gitClientId: process.env.GITHUB_CLIENT_ID,
     gitSecret: process.env.GITHUB_CLIENT_SECRET,
-    gitUrl: process.env.GITHUB_URL
+    gitUrl: process.env.GITHUB_URL,
+
+    //Admin
+    adminUser: process.env.ADMINUSER,
+    adminPass: process.env.ADMINPASS
 };
 
 

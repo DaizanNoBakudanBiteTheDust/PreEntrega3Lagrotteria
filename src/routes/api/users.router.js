@@ -22,8 +22,8 @@ router.get('/fail-register', failRegisterUser);
 
 
 const adminUser = {
-    email: 'adminCoder@coder.com',
-    password: 'adminCod3r123'
+    email: configs.adminUser,
+    password: configs.adminPass
 };
 
 router.post('/login', loginUser);
