@@ -58,7 +58,7 @@ const failRegisterUser = async (req, res) => {
 };
 
 
-const adminUser = {
+const adminUserPredator = {
     email: configs.adminUser,
     password: configs.adminPass
 };
@@ -70,7 +70,7 @@ const loginUser = async (req, res) => {
         password
     } = req.body;
 
-    if (email === configs.adminUser || password === configs.adminPass) {
+    if (email === adminUserPredator.email || password === adminUserPredator.password) {
         req.user = {
             name: 'Admin', // O cualquier otro nombre para el administrador
             email: email,
@@ -147,6 +147,16 @@ const userGithubLogin = async (req, res) => {
 const userGithubCallback = async (req, res) => {
     try {
         const user = req.user;
+
+        // Crear un carrito nuevo para el usuario registrado
+        const cart = await saveCart({ userId: user._id });
+
+        const cartObjectId = cart.cart._id;
+
+
+        // Agrega el carrito recién creado al usuario
+        await cartToUser(user._id, cartObjectId);
+
         const {
             password: _,
             ...userResult

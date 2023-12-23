@@ -13,6 +13,7 @@ import {
     userGithubCallback,
     getCurrentUser
 } from '../../controlers/users.controller.js'
+import configs from '../../config.js'
 
 const router = Router();
 
