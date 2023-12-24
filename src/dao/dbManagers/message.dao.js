@@ -1,4 +1,4 @@
-import { messagesModel } from "./models/messages.model.js";
+import { messagesModel } from "./models/messages.models.js";
 
 
 export default class Messages {
