@@ -10,3 +10,7 @@ const generatePurchase = async (user, amount) => {
 
     await ticketRepository.save(newTicket);
 }
+
+export{
+    generatePurchase
+}
