@@ -1,4 +1,4 @@
-import Products from '../dao/dbManagers/products.manager.js';
+import Products from '../dao/dbManagers/products.dao.js';
 
 const manager = new Products();
 

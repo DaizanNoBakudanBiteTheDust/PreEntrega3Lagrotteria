@@ -1,4 +1,4 @@
-import Users from '../dao/dbManagers/users.manager.js';
+import Users from '../dao/dbManagers/users.dao.js';
 
 const manager = new Users();
 
