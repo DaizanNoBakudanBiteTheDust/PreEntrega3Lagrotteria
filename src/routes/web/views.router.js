@@ -1,9 +1,9 @@
 import {
     Router
 } from 'express'
-import Products from '../../dao/dbManagers/products.manager.js';
-import Carts from '../../dao/dbManagers/cart.manager.js';
-import Messages from '../../dao/dbManagers/message.manager.js';
+import Products from '../../dao/dbManagers/products.dao.js';
+import Carts from '../../dao/dbManagers/cart.dao.js';
+import Messages from '../../dao/dbManagers/message.dao.js';
 import passport from 'passport';
 import {
     productsModel
@@ -160,8 +160,15 @@ router.get('/realTimeCarts', async (req, res) => {
     });
 });
 
-router.get('/cart', async (req, res) => {
-    const cartById = '6548f637d8891916f4b7065b';
+router.get('/cart', privateAccess, async (req, res) => {
+
+    const user = req.user;
+
+        let userData = user;
+
+     const cartId = userData.carts[0].cart._id;
+
+    const cartById = cartId;
     const cartData = await cartManager.getCartById({
         _id: cartById
     });

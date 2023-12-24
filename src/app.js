@@ -28,9 +28,9 @@ import viewsRouter from './routes/web/views.router.js';
 
 //Managers para el socket
 
-import Products from './dao/dbManagers/products.manager.js';
-import Carts from './dao/dbManagers/cart.manager.js';
-import Messages from './dao/dbManagers/message.manager.js';
+import Products from './dao/dbManagers/products.dao.js';
+import Carts from './dao/dbManagers/cart.dao.js';
+import Messages from './dao/dbManagers/message.dao.js';
 
 
 
