@@ -8,7 +8,8 @@ import {saveCarts,
         updateCart,
         updateCartProduct,
         getCarts,
-        getSpecificCart} from '../../controlers/cart.controller.js'
+        getSpecificCart,
+cartPurchase} from '../../controlers/cart.controller.js'
 
 
 const router = Router();
@@ -23,6 +24,10 @@ router.post('/', saveCarts)
 
 router.post('/:cid/products/:pid', saveProductOnCart);
     
+
+//Paganding
+
+router.post('/:cid/purchase', cartPurchase);
 
 //Vacio carro
 
