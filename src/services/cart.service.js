@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import Carts from '../dao/dbManagers/cart.dao.js';
 import cartsRepository from '../repositories/carts.repository.js';
+import productsRepository from '../repositories/products.repository.js';
 import generatePurchase from '../services/tickets.service.js';
+
 
 const manager = new Carts();
 
@@ -67,7 +69,7 @@ const purchase = async (cid, user) => {
             amount += product.price * quantity;
             product.stock -= quantity;
             // Utilizar el repostiory de productos y actualizar el producto con el stock correspondiente
-            await productsReposity.updateById('Id del producto', product) //HACER REPOSITORY DE PRODUTOS
+            await productsRepository.updateById('Id del producto', product) 
         } else {
             outStock.push({
                 product,

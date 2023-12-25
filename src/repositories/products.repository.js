@@ -1,10 +1,10 @@
-import Ticket from '../dao/dbManagers/products.dao.js';
+import Products from '../dao/dbManagers/products.dao.js';
 
-const daoProducts = new Ticket();
+const daoProducts = new Products();
 
 export default class productsRepository {
-    save = async(ticket) => {
-        const result = await daoTicket.save(ticket);
+    updateById = async(id) => {
+        const result = await daoProducts.getProductById(id);
         return result;
     }
 }
