@@ -10,6 +10,8 @@
                         <li>Cantidad: {{this.quantity}}</li>
                     </ul>
                     {{/each}}
+                    <p>CartID = {{cartId}}</p>
+                     <button onclick="purchaseCart()">Comprar</button>
                 </ul>
             </div>
         </div>
@@ -18,5 +20,19 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/cartView.js"></script>
+
 <script>
+    // Función para comprar un carrito específico
+ function purchaseCart(cartId) { // Recibe cartId como parámetro
+        fetch(`/api/carts/${cartId}/purchase`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Aquí puedes manejar la respuesta del servidor
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
 </script>

@@ -190,6 +190,7 @@ router.get('/cart', privateAccess, async (req, res) => {
     console.log(products);
 
     res.render('cartId', {
+        cartId,
         cartProducts: products
     });
 });

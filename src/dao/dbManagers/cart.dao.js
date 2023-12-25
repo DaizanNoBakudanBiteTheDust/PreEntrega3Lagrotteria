@@ -32,13 +32,19 @@ export default class Carts {
     }
 
     getCartById = async (id) => {
-        const cart = await cartsModel.findById(id);
+        try {
+            const cart = await cartsModel.findById(id);
 
         if (!cart) {
             throw new Error('Carrito no encontrado');
         }
     
         return cart;
+            
+        } catch (error) {
+            return { status: error.status || 500, error: error.message };
+        }
+        
     }
 
     getProductById = async (id) => {

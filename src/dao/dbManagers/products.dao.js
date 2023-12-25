@@ -73,15 +73,18 @@ export default class Products {
         return result;
     }
     getProductById = async (id) => {
-
-        const product = await productsModel.findOne({ _id: id}).lean();
+        try {
+            const product = await productsModel.findOne({ _id: id}).lean();
         
-        if (!product) {
-            throw new Error('Producto no encontrado');
-
-        } 
-        return product;
-
-
+            if (!product) {
+                throw new Error('Producto no encontrado');
+    
+            } 
+            return product;
+    
+            
+        } catch (error) {
+            return { status: error.status || 500, error: error.message };
+        }
     }
 }

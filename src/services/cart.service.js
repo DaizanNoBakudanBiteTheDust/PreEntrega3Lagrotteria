@@ -4,7 +4,7 @@ import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
 import {generatePurchase} from '../services/tickets.service.js';
 
-
+const repo = new cartsRepository();
 const manager = new Carts();
 
 const getAllCarts = async () => {
@@ -14,13 +14,13 @@ const getAllCarts = async () => {
 }
 
 const saveCart = async (cart) => {
-    const saveCarts = await manager.save(cart);
+    const saveCarts = await repo.save(cart);
 
     return saveCarts;
 }
 
 const cartUpdate = async (id, cart) => {
-    const updateCarts = await manager.update(id, cart);
+    const updateCarts = await repo.updateProducts(id, cart);
 
     return updateCarts;
 }
@@ -32,7 +32,7 @@ const cartDelete = async (id, cart) => {
 }
 
 const cartById = async (id) => {
-    const idCarts = await manager.getCartById(id);
+    const idCarts = await repo.findById(id);
 
     return idCarts;
 }
@@ -53,23 +53,28 @@ const cartDeleteProduct = async (id, cart) => {
 //compra
 
 const purchase = async (cid, user) => {
+
     //Transacciones
     const session = await mongoose.startSession();
     session.startTransaction();
+
+    const cart = await repo.findById({cid}) // Suponiendo que tienes un repositorio para obtener carritos
+    console.log(cid)
+
+if (!cart) {
+    throw new Error('Carrito no encontrado'); // Handle el caso de que el carrito no exista
+}
 
     let amount = 0;
 
     const outStock = [];
 
-    cart.products.forEach(async ({
-        product,
-        quantity
-    }) => {
+if (cart && cart.products && cart.products.length > 0) {
+    cart.products.forEach(async ({ product, quantity }) => {
         if (product.stock >= quantity) {
             amount += product.price * quantity;
             product.stock -= quantity;
-            // Utilizar el repostiory de productos y actualizar el producto con el stock correspondiente
-            await productsRepository.updateById('Id del producto', product) 
+            await productsRepository.updateById('Id del producto', product);
         } else {
             outStock.push({
                 product,
@@ -77,7 +82,7 @@ const purchase = async (cid, user) => {
             });
         }
     });
-
+}
     const ticket = await generatePurchase(user, amount);
     //actulizar el carrito con el nuevo arreglo de productos que no pudieron comprarse
 
@@ -90,7 +95,7 @@ ${outStock.map(({ product }) => product.name).join(', ')}`;
         await notifyUser(user, message);
     }
 
-    await cartsRepository.updateProducts(cid, outStock);
+    await repo.updateProducts(cid, outStock);
 
     await session.commitTransaction();
 

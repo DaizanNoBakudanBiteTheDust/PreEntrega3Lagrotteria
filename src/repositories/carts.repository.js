@@ -12,4 +12,9 @@ export default class cartsRepository {
         const result = await daoCarts.update(id, cart);
         return result;
     }
+
+    findById = async(id) => {
+        const result = await daoCarts.getCartById(id);
+        return result;
+    }
 }

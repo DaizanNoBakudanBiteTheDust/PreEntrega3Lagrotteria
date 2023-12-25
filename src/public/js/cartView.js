@@ -1,7 +1,7 @@
 // Socket comunica con servidor
 const socket = io();
 
-socket.on('showCartById', data => { 
+socket.on('showCartById', data => {
     container.innerHTML = ``;
 
     data.forEach(cart => {
@@ -12,11 +12,6 @@ socket.on('showCartById', data => {
                 <li>Quantity: ${product.quantity}</li>
             `;
         });
-        container.innerHTML += `<li>Cart ID: ${cart._id}</li></ul>`;
+        container.innerHTML += `<li>Cart ID: ${cart._id} <button onclick="purchaseCart(${cart})">Comprar</button></li></ul>`;
     });
 });
-
-
-
-
-
