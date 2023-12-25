@@ -4,7 +4,8 @@ import { getAllCarts,
     cartUpdate,
     cartById,
     cartProductId,
-    cartDeleteProduct
+    cartDeleteProduct,
+    purchase
  } from "../services/cart.service.js";
 
 
@@ -318,6 +319,20 @@ const getSpecificCart = async (req, res) => {
 
 }
 
+
+const cartPurchase = async (req, res) => {
+        try {
+            const { cid } = req.params;
+            const { user } = req.user;
+    
+            const result = await purchase(cid, user);
+            
+            res.send({ result });
+        } catch (error) {
+            res.status(500).send()
+        }
+    }
+
 export {saveCarts,
 saveProductOnCart,
 deleteCartProducts,
@@ -325,5 +340,6 @@ deleteCartProductById,
 updateCart,
 updateCartProduct,
 getCarts,
-getSpecificCart
+getSpecificCart,
+cartPurchase
 }

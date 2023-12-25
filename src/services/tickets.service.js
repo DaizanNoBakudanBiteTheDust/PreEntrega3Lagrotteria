@@ -1,4 +1,3 @@
-import ticketRepository from '../repositories/tickets.repository.js';
 
 const generatePurchase = async (user, amount) => { 
     const newTicket = {
