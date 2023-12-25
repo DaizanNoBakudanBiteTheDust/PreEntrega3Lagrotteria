@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import Carts from '../dao/dbManagers/cart.dao.js';
+import cartsRepository from '../repositories/carts.repository.js';
+import generatePurchase from '../services/tickets.service.js';
 
-const manager = new Carts(); 
+const manager = new Carts();
 
 const getAllCarts = async () => {
     const carts = await manager.getAll();
@@ -57,21 +59,36 @@ const purchase = async (cid, user) => {
 
     const outStock = [];
 
-    cart.products.forEach(async ({ product, quantity }) => {
-        if(product.stock >= quantity) {
+    cart.products.forEach(async ({
+        product,
+        quantity
+    }) => {
+        if (product.stock >= quantity) {
             amount += product.price * quantity;
             product.stock -= quantity;
             // Utilizar el repostiory de productos y actualizar el producto con el stock correspondiente
             await productsReposity.updateById('Id del producto', product) //HACER REPOSITORY DE PRODUTOS
         } else {
-            outStock.push({ product, quantity });
+            outStock.push({
+                product,
+                quantity
+            });
         }
     });
 
-    const ticket = await ticketsService.generatePurchase(user, amount);
+    const ticket = await generatePurchase(user, amount);
     //actulizar el carrito con el nuevo arreglo de productos que no pudieron comprarse
-    //utilizar el repository de carritos para poder actualizar los productos
-    await cartsRepository.updateProducts(cid, outStock); //HACER REPOSITORY DE CARROS
+
+
+    if (outStock.length > 0) {
+        const message = `Los siguientes productos no pudieron ser comprados porque no hay stock suficiente:
+
+${outStock.map(({ product }) => product.name).join(', ')}`;
+
+        await notifyUser(user, message);
+    }
+
+    await cartsRepository.updateProducts(cid, outStock);
 
     await session.commitTransaction();
 
@@ -81,7 +98,7 @@ const purchase = async (cid, user) => {
     session.endSession();
 }
 
-export{
+export {
     getAllCarts,
     saveCart,
     cartDelete,
