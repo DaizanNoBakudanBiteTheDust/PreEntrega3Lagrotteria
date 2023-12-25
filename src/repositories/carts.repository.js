@@ -1,4 +1,4 @@
-import Carts from '../dao/dbManagers/carts.dao.js';
+import Carts from '../dao/dbManagers/cart.dao.js';
 
 const daoCarts = new Carts();
 

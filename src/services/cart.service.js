@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Carts from '../dao/dbManagers/cart.dao.js';
 import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
-import generatePurchase from '../services/tickets.service.js';
+import {generatePurchase} from '../services/tickets.service.js';
 
 
 const manager = new Carts();
