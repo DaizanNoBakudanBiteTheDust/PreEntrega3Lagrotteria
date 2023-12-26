@@ -3,6 +3,12 @@ import Carts from '../dao/dbManagers/cart.dao.js';
 const daoCarts = new Carts();
 
 export default class cartsRepository {
+
+    getAll = async() => {
+        const result = await daoCarts.getAll();
+        return result;
+    }
+
     save = async(cart) => {
         const result = await daoCarts.saveCart(cart);
         return result;
@@ -20,6 +26,16 @@ export default class cartsRepository {
 
     productById = async(id) => {
         const result = await daoCarts.getProductById(id);
+        return result;
+    }
+
+    delete = async(id, cart) => {
+        const result = await daoCarts.delete(id, cart);
+        return result;
+    }
+
+    deleteProductById = async(id, cart) => {
+        const result = await daoCarts.deleteProductById(id, cart);
         return result;
     }
 }

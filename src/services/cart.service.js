@@ -1,15 +1,13 @@
 import mongoose from 'mongoose';
-import Carts from '../dao/dbManagers/cart.dao.js';
 import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
 import {generatePurchase} from '../services/tickets.service.js';
 
 const cartRepo = new cartsRepository();
 const productRepo = new productsRepository();
-const manager = new Carts();
 
 const getAllCarts = async () => {
-    const carts = await manager.getAll();
+    const carts = await cartRepo.getAll();
 
     return carts;
 }
@@ -27,7 +25,7 @@ const cartUpdate = async (id, cart) => {
 }
 
 const cartDelete = async (id, cart) => {
-    const deleteCarts = await manager.delete(id, cart);
+    const deleteCarts = await cartRepo.delete(id, cart);
 
     return deleteCarts;
 }
@@ -46,7 +44,7 @@ const cartProductId = async (id) => {
 
 
 const cartDeleteProduct = async (id, cart) => {
-    const deleteProductCarts = await manager.deleteProductById(id, cart);
+    const deleteProductCarts = await cartRepo.deleteProductById(id, cart);
 
     return deleteProductCarts;
 }
