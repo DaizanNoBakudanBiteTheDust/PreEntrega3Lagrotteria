@@ -17,4 +17,9 @@ export default class cartsRepository {
         const result = await daoCarts.getCartById(id);
         return result;
     }
+
+    productById = async(id) => {
+        const result = await daoCarts.getProductById(id);
+        return result;
+    }
 }

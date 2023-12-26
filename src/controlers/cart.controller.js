@@ -324,7 +324,6 @@ const cartPurchase = async (req, res) => {
         try {
             const { cid } = req.params;
             const { user } = req.user;
-    
             const result = await purchase(cid, user);
             
             res.send({ result });

@@ -4,7 +4,8 @@ import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
 import {generatePurchase} from '../services/tickets.service.js';
 
-const repo = new cartsRepository();
+const cartRepo = new cartsRepository();
+const productRepo = new productsRepository();
 const manager = new Carts();
 
 const getAllCarts = async () => {
@@ -14,13 +15,13 @@ const getAllCarts = async () => {
 }
 
 const saveCart = async (cart) => {
-    const saveCarts = await repo.save(cart);
+    const saveCarts = await cartRepo.save(cart);
 
     return saveCarts;
 }
 
 const cartUpdate = async (id, cart) => {
-    const updateCarts = await repo.updateProducts(id, cart);
+    const updateCarts = await cartRepo.updateProducts(id, cart);
 
     return updateCarts;
 }
@@ -32,13 +33,13 @@ const cartDelete = async (id, cart) => {
 }
 
 const cartById = async (id) => {
-    const idCarts = await repo.findById(id);
+    const idCarts = await cartRepo.findById(id);
 
     return idCarts;
 }
 
 const cartProductId = async (id) => {
-    const productCarts = await manager.getProductById(id);
+    const productCarts = await cartRepo.productById(id);
 
     return productCarts;
 }
@@ -53,13 +54,11 @@ const cartDeleteProduct = async (id, cart) => {
 //compra
 
 const purchase = async (cid, user) => {
-
     //Transacciones
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    const cart = await repo.findById({cid}) // Suponiendo que tienes un repositorio para obtener carritos
-    console.log(cid)
+    const cart = await cartRepo.findById({cid}) // Suponiendo que tienes un repositorio para obtener carritos
 
 if (!cart) {
     throw new Error('Carrito no encontrado'); // Handle el caso de que el carrito no exista
@@ -74,7 +73,7 @@ if (cart && cart.products && cart.products.length > 0) {
         if (product.stock >= quantity) {
             amount += product.price * quantity;
             product.stock -= quantity;
-            await productsRepository.updateById('Id del producto', product);
+            await productRepo.updateById('Id del producto', product);
         } else {
             outStock.push({
                 product,
@@ -95,7 +94,7 @@ ${outStock.map(({ product }) => product.name).join(', ')}`;
         await notifyUser(user, message);
     }
 
-    await repo.updateProducts(cid, outStock);
+    await cartRepo.updateProducts(cid, outStock);
 
     await session.commitTransaction();
 
