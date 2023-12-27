@@ -7,6 +7,7 @@ import { getAllCarts,
     cartDeleteProduct,
     purchase
  } from "../services/cart.service.js";
+ import {decodedToken} from "../utils.js"
 
 
  const saveCarts = async (req, res) => {
@@ -323,16 +324,14 @@ const getSpecificCart = async (req, res) => {
 const cartPurchase = async (req, res) => {
         try {
             const { cid } = req.params;
-            const user = req.user;
 
-        let userData = user;
+        const cookie = req.cookies.coderCookieToken;
+       
+        const decodedcookie = decodedToken(cookie);
 
-        if (user && user._doc) {
-            // Utiliza _doc si está presente (por ejemplo, en la estrategia JWT)
-            userData = user._doc;
-        }
+            const user = decodedcookie;
 
-            console.log(userData)
+            console.log(user)
 
             //CID LO OBTIENE
                

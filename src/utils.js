@@ -29,12 +29,22 @@ const isValidPassword = (plainPassword, hashedPassword) =>
     return token;
 }
 
+const decodedToken = (token) => { 
+    const decodedToken = jwt.decode(token);
+
+    // Recupera el usuario
+    const user = decodedToken.user;
+
+    return user;
+}
+
 
 export {
     __dirname,
     createHash,
     isValidPassword,
-    generateToken
+    generateToken,
+    decodedToken
 };
 
 export const productsFilePath = join(__dirname, "./dao/fileManagers/files/productos.json")

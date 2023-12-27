@@ -57,6 +57,8 @@ const purchase = async (cid, user) => {
       const session = await mongoose.startSession();
       session.startTransaction();  
 
+      console.log(user)
+
            // Obtener carrito
       const cart = await cartRepo.findById({_id: cid});
       // Transacciones

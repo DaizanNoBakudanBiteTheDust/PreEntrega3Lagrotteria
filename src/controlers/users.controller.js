@@ -97,9 +97,6 @@ const loginUser = async (req, res) => {
 
     console.log(accessToken, userNew)
 
-   
-
-
     res.cookie('coderCookieToken', accessToken, {
         maxAge: 60 * 60 * 1000,
         httpOnly: true

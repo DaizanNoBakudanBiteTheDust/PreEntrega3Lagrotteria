@@ -7,7 +7,7 @@ function purchaseCart() { // Recibe cartId como parámetro
 
     fetch(`/api/carts/${cartId}/purchase`, {
         method: 'POST',
-        body: JSON.stringify(obj),
+        body: JSON.stringify({obj}),
         headers: {
             'Content-Type': 'application/json'
         }
