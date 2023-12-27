@@ -322,7 +322,17 @@ const getSpecificCart = async (req, res) => {
 
 const cartPurchase = async (req, res) => {
         try {
-            const { cid, user } = req.params;
+            const { cid } = req.params;
+            const user = req.user;
+
+        let userData = user;
+
+        if (user && user._doc) {
+            // Utiliza _doc si está presente (por ejemplo, en la estrategia JWT)
+            userData = user._doc;
+        }
+
+            console.log(userData)
 
             //CID LO OBTIENE
                

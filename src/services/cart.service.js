@@ -1,13 +1,11 @@
 import mongoose from 'mongoose';
 import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
-import usersRepository from '../repositories/users.repository.js';
 import {generatePurchase} from './tickets.service.js';
 
 
 const cartRepo = new cartsRepository();
 const productRepo = new productsRepository();
-const userRepo = new usersRepository();
 
 const getAllCarts = async () => {
     const carts = await cartRepo.getAll();
