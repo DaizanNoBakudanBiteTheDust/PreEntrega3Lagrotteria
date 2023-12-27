@@ -59,7 +59,6 @@ const purchase = async (cid, user) => {
       const session = await mongoose.startSession();
       session.startTransaction();  
 
-        
            // Obtener carrito
       const cart = await cartRepo.findById({_id: cid});
       // Transacciones
@@ -74,16 +73,18 @@ const purchase = async (cid, user) => {
       let amount = 0;
       const outStock = [];
   
+      console.log(cart.products)
+
       cart.products.forEach(async ({ product, quantity }) => {
         if (product.stock >= quantity) {
           amount += product.precio * quantity;
           product.stock -= quantity;
-          await productRepo.updateById(product._id, product);
+          await productRepo.updateById(product._id);
         } else {
           outStock.push({ product, quantity });
         }
       });
-
+      
       const ticket = await generatePurchase(user, amount);
   
   

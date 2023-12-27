@@ -2,9 +2,11 @@ const obj = {};
 
 
 
-function purchaseCart(cartId) { // Recibe cartId como parámetro
-    let urlParam = cartId;
-    fetch(`/api/carts/${urlParam}/purchase`, {
+function purchaseCart() { // Recibe cartId como parámetro
+
+    const cartId = document.getElementById("cartId").value;
+
+    fetch(`/api/carts/${cartId}/purchase`, {
         method: 'POST',
         body: JSON.stringify(obj),
         headers: {
