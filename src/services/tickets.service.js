@@ -15,6 +15,8 @@ const generatePurchase = async (user, amount) => {
     console.log(newTicket);
 
     await ticketRepo.save(newTicket);
+
+    return newTicket;
 }
 
 export{

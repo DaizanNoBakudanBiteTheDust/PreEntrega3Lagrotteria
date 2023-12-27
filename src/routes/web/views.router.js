@@ -8,11 +8,12 @@ import passport from 'passport';
 import {
     productsModel
 } from "../../dao/dbManagers/models/products.models.js";
+import cartsRepository from '../../repositories/carts.repository.js'
 
 const router = Router();
 
 const prodManager = new Products();
-const cartManager = new Carts();
+const cartManager = new cartsRepository();
 const chatManager = new Messages();
 
 
@@ -109,6 +110,12 @@ router.get('/cart', privateAccess, async (req, res) => {
     });
 });
 
+router.get('/chat', privateAccess, async (req, res) => {
+    res.render('chat', {
+        chat: await chatManager.getAll()
+    });
+});
+
 
 router.get('/productsLog', async (req, res) => {
 
@@ -195,11 +202,7 @@ router.get('/realTimeCarts', async (req, res) => {
 });
 
 
-router.get('/chat', async (req, res) => {
-    res.render('chat', {
-        chat: await chatManager.getAll()
-    });
-});
+
 
 
 export default router;

@@ -58,9 +58,10 @@ const purchase = async (cid, user) => {
       session.startTransaction();  
 
       console.log(user)
+      console.log(cid)
 
            // Obtener carrito
-      const cart = await cartRepo.findById({_id: cid});
+      const cart = cid;
       // Transacciones
 
       if (!cart) {
@@ -86,9 +87,16 @@ const purchase = async (cid, user) => {
       
       const ticket = await generatePurchase(user, amount);
   
-  
       // Actualizar carrito
       await cartRepo.updateProducts(cid, outStock);
+      
+      const notifyUser = async (user, message) => {
+        const email = user.email;
+        const subject = 'Notificación de compra';
+        const body = message;
+      
+        await sendEmail(email, subject, body);
+      };
   
       // Notificar usuario (si hay productos sin stock)
       if (outStock.length > 0) {
