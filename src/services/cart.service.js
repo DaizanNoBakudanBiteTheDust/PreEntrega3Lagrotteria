@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
 import {generatePurchase} from './tickets.service.js';
+import nodemailer from 'nodemailer';
 
 
 const cartRepo = new cartsRepository();
@@ -86,6 +87,22 @@ const purchase = async (cid, user) => {
 
       
       const ticket = await generatePurchase(user, amount);
+
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        port: 587,
+        auth: {
+            user: 'gabriellagrotteria18@gmail.com',
+            pass: 'vfkdolrcdjbivjfg'
+        }
+      });
+
+      await transporter.sendMail({
+        from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
+        to: user, // Dirección de correo del usuario
+        subject: 'Ticket de compra',
+        html: `<h3>Tu ticket de compra</h3><br>${JSON.stringify(ticket, null, 2)}` // Puedes personalizar el formato del correo
+      });
 
       console.log(ticket)
 
