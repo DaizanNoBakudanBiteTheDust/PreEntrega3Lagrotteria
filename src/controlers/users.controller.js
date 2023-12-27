@@ -70,6 +70,8 @@ const loginUser = async (req, res) => {
         password
     } = req.body;
 
+    console.log(req.body)
+
     if (email === adminUserPredator.email || password === adminUserPredator.password) {
         req.user = {
             name: 'Admin', // O cualquier otro nombre para el administrador
@@ -77,16 +79,17 @@ const loginUser = async (req, res) => {
             role: 'admin'
         };
 
-        return res.send({
-            status: 'success',
-            message: 'Inicio de sesión como administrador exitoso'
-        });
-    }
+        const accessToken = generateToken(req.user); // Use req.user for token generation
+
+      res.cookie('coderCookieToken', accessToken, {
+        maxAge: 60 * 60 * 1000,
+        httpOnly: true
+      }).redirect('/admin');
+    }else{
 
      // Verifica que los campos requeridos estén presentes en la petición
 
     const userNew = await getUserByEmail(email);
-
 
     //generar el jwt
     const {
@@ -105,6 +108,7 @@ const loginUser = async (req, res) => {
         status: 'success',
         message: 'login success'
     })
+    }
 };
 
 

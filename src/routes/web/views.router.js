@@ -1,10 +1,12 @@
 import {
     Router
-} from 'express'
+} from 'express';
+import configs from '../../config.js'
 import Products from '../../dao/dbManagers/products.dao.js';
 import Carts from '../../dao/dbManagers/cart.dao.js';
 import Messages from '../../dao/dbManagers/message.dao.js';
 import passport from 'passport';
+import {decodedToken} from '../../utils.js'
 import {
     productsModel
 } from "../../dao/dbManagers/models/products.models.js";
@@ -27,13 +29,38 @@ const publicAccess = (req, res, next) => {
     next();
 }
 
+const adminUserPredator = {
+    email: configs.adminUser,
+    password: configs.adminPass
+};
+
 const privateAccess = (req, res, next) => {
     passportJWT(req, res, (err) => {
         if (err || !req.user) {
-            return res.redirect('/login');
+            return res.status(401).send('Unauthorized');
         }
-        next();
+
+        if (req.user.role === 'admin') {
+            res.redirect('/admin');
+        } else {
+            next();
+        }
     });
+
+}
+
+const AdminAccess = (req, res, next) => {
+    let token = req.cookies.coderCookieToken;
+
+    let user = decodedToken(token)
+
+    console.log(user)
+
+    if (adminUserPredator.email && adminUserPredator.password) {
+        next();
+    } else {
+        return res.status(403).send('No tienes permisos para acceder a esta ruta');
+    }
 }
 
 
@@ -43,6 +70,13 @@ router.get('/register', publicAccess, (req, res) => {
 
 router.get('/login', publicAccess, (req, res) => {
     res.render('login')
+});
+
+
+router.get('/admin', AdminAccess, async (req, res) => {
+    res.render('realTimeProducts', {
+        products: await prodManager.getAll(req)
+    });
 });
 
 
@@ -116,7 +150,7 @@ router.get('/chat', privateAccess, async (req, res) => {
 });
 
 
-router.get('/productsLog', async (req, res) => {
+router.get('/productsLog',AdminAccess, async (req, res) => {
 
     res.render('home', {
         products: await prodManager.getAll(req)
@@ -125,7 +159,7 @@ router.get('/productsLog', async (req, res) => {
 });
 
 
-router.get('/realTimeProducts', async (req, res) => {
+router.get('/realTimeProducts', AdminAccess, async (req, res) => {
     res.render('realTimeProducts', {
         products: await prodManager.getAll(req)
     });
@@ -194,7 +228,7 @@ router.get('/products', async (req, res) => {
 
 });
 
-router.get('/realTimeCarts', async (req, res) => {
+router.get('/realTimeCarts', AdminAccess, async (req, res) => {
     res.render('realTimeCarts', {
         carts: await cartManager.getAll()
     });
