@@ -36,15 +36,6 @@ const privateAccess = (req, res, next) => {
     });
 }
 
-router.get('/productsLog', async (req, res) => {
-
-    res.render('home', {
-        products: await prodManager.getAll(req)
-    });
-
-});
-
-
 
 router.get('/register', publicAccess, (req, res) => {
     res.render('register')
@@ -82,7 +73,50 @@ router.get('/', privateAccess, async (req, res) => {
     }
 });
 
+router.get('/cart', privateAccess, async (req, res) => {
 
+    const user = req.user;
+
+        let userData = user;
+
+     const cartId = userData.carts[0].cart._id;
+
+    const cartById = cartId;
+    const cartData = await cartManager.getCartById({
+        _id: cartById
+    });
+
+    const transformedData = cartData.products.map(product => ({
+        product: product.product, // Ajusta según tu estructura real
+        quantity: product.quantity,
+        _id: product._id
+    }));
+
+
+    // Comprueba si el carrito se encontró
+    if (!cartData) {
+        return res.status(404).send('Carrito no encontrado');
+    }
+
+    const products = transformedData;
+
+    console.log(products);
+
+    res.render('cartId', {
+        cartId,
+        cartProducts: products,
+        userData: userData.email
+    });
+});
+
+
+router.get('/productsLog', async (req, res) => {
+
+    res.render('home', {
+        products: await prodManager.getAll(req)
+    });
+
+});
 
 
 router.get('/realTimeProducts', async (req, res) => {
@@ -160,40 +194,6 @@ router.get('/realTimeCarts', async (req, res) => {
     });
 });
 
-router.get('/cart', privateAccess, async (req, res) => {
-
-    const user = req.user;
-
-        let userData = user;
-
-     const cartId = userData.carts[0].cart._id;
-
-    const cartById = cartId;
-    const cartData = await cartManager.getCartById({
-        _id: cartById
-    });
-
-    const transformedData = cartData.products.map(product => ({
-        product: product.product, // Ajusta según tu estructura real
-        quantity: product.quantity,
-        _id: product._id
-    }));
-
-
-    // Comprueba si el carrito se encontró
-    if (!cartData) {
-        return res.status(404).send('Carrito no encontrado');
-    }
-
-    const products = transformedData;
-
-    console.log(products);
-
-    res.render('cartId', {
-        cartId,
-        cartProducts: products
-    });
-});
 
 router.get('/chat', async (req, res) => {
     res.render('chat', {

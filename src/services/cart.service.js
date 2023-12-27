@@ -70,8 +70,6 @@ const purchase = async (cid, user) => {
       // Procesar productos
       let amount = 0;
       const outStock = [];
-  
-      console.log(cart.products)
 
       cart.products.forEach(async ({ product, quantity }) => {
         if (product.stock >= quantity) {
@@ -82,6 +80,7 @@ const purchase = async (cid, user) => {
           outStock.push({ product, quantity });
         }
       });
+
       
       const ticket = await generatePurchase(user, amount);
   

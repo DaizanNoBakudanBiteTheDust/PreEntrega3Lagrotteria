@@ -3,7 +3,6 @@ const obj = {};
 
 
 function purchaseCart() { // Recibe cartId como parámetro
-
     const cartId = document.getElementById("cartId").value;
 
     fetch(`/api/carts/${cartId}/purchase`, {

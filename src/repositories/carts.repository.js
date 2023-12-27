@@ -10,7 +10,7 @@ export default class cartsRepository {
     }
 
     save = async(cart) => {
-        const result = await daoCarts.saveCart(cart);
+        const result = await daoCarts.save(cart);
         return result;
     }
 

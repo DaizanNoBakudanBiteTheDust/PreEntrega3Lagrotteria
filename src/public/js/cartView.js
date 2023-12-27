@@ -12,6 +12,5 @@ socket.on('showCartById', data => {
                 <li>Quantity: ${product.quantity}</li>
             `;
         });
-        container.innerHTML += `<li>Cart ID: ${cart._id} <button onclick="purchaseCart(${cart._id})">Comprar</button></li></ul>`;
     });
 });
