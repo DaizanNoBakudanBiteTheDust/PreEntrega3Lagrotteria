@@ -1,7 +1,6 @@
 import ticketRepository from '../repositories/tickets.repository.js';
 import { v4 as uuidv4 } from 'uuid';
 
-
 const ticketRepo = new ticketRepository();
 
 const generatePurchase = async (user, amount) => { 

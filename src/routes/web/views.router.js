@@ -8,12 +8,11 @@ import passport from 'passport';
 import {
     productsModel
 } from "../../dao/dbManagers/models/products.models.js";
-import cartsRepository from '../../repositories/carts.repository.js'
 
 const router = Router();
 
 const prodManager = new Products();
-const cartManager = new cartsRepository();
+const cartManager = new Carts();
 const chatManager = new Messages();
 
 

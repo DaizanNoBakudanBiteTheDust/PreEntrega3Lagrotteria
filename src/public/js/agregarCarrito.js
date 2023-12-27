@@ -15,12 +15,13 @@ async function addProduct(pid, cartId) {
          // Convierte el cuerpo de la respuesta en un objeto JSON
          const data = await response.json();
 
+
          const cartData = data.payload;
-         
 
          // Buscar el producto en el carrito por el ID del producto
          const existingProductIndex = cartData.products.find(p => p.product._id.toString() === pid);
-        
+    
+
         if (existingProductIndex) {
             // Si el producto ya existe en el carrito, incrementa la cantidad
             existingProductIndex.quantity += 1;

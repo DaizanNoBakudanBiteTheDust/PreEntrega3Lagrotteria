@@ -61,7 +61,7 @@ const purchase = async (cid, user) => {
       console.log(cid)
 
            // Obtener carrito
-      const cart = cid;
+      const cart = user.carts[0].cart;
       // Transacciones
 
       if (!cart) {
@@ -86,23 +86,9 @@ const purchase = async (cid, user) => {
 
       
       const ticket = await generatePurchase(user, amount);
-  
-      // Actualizar carrito
-      await cartRepo.updateProducts(cid, outStock);
-      
-      const notifyUser = async (user, message) => {
-        const email = user.email;
-        const subject = 'Notificación de compra';
-        const body = message;
-      
-        await sendEmail(email, subject, body);
-      };
-  
-      // Notificar usuario (si hay productos sin stock)
-      if (outStock.length > 0) {
-        await notifyUser(user, `Los siguientes productos no pudieron ser comprados porque no hay stock suficiente:\n${outStock.map(({ product }) => product.name).join('\n')}`);
-      }
-  
+
+      console.log(ticket)
+
       // Confirmar transacción
       await session.commitTransaction();
     } catch (error) {
@@ -111,6 +97,16 @@ const purchase = async (cid, user) => {
     } finally {
       session.endSession();
     }
+
+      // Notificar usuario (si hay productos sin stock)
+  if (outStock.length > 0) {
+    console.log(`Los siguientes productos no pudieron ser comprados porque no hay stock suficiente:\n${outStock.map(({ product }) => product.name).join('\n')}`);
+  }
+
+  // Vaciar carrito
+  cart.products = [];
+
+
   };
 
 export {
