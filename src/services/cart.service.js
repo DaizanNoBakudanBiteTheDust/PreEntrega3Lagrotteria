@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
-import {generatePurchase} from '../services/tickets.service.js';
+import usersRepository from '../repositories/users.repository.js';
+import {generatePurchase} from './tickets.service.js';
+
 
 const cartRepo = new cartsRepository();
 const productRepo = new productsRepository();
+const userRepo = new usersRepository();
 
 const getAllCarts = async () => {
     const carts = await cartRepo.getAll();
@@ -52,55 +55,55 @@ const cartDeleteProduct = async (id, cart) => {
 //compra
 
 const purchase = async (cid, user) => {
-    //Transacciones
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    try {
+      const session = await mongoose.startSession();
+      session.startTransaction();  
 
-    const cart = await cartRepo.findById({cid}) // Suponiendo que tienes un repositorio para obtener carritos
+        
+           // Obtener carrito
+      const cart = await cartRepo.findById({_id: cid});
+      // Transacciones
 
-if (!cart) {
-    throw new Error('Carrito no encontrado'); // Handle el caso de que el carrito no exista
-}
-
-    let amount = 0;
-
-    const outStock = [];
-
-if (cart && cart.products && cart.products.length > 0) {
-    cart.products.forEach(async ({ product, quantity }) => {
+      if (!cart) {
+        console.log("carrito no encontrado")
+      }else{
+        console.log("carrito encontrado")
+      }
+  
+      // Procesar productos
+      let amount = 0;
+      const outStock = [];
+  
+      cart.products.forEach(async ({ product, quantity }) => {
         if (product.stock >= quantity) {
-            amount += product.price * quantity;
-            product.stock -= quantity;
-            await productRepo.updateById('Id del producto', product);
+          amount += product.precio * quantity;
+          product.stock -= quantity;
+          await productRepo.updateById(product._id, product);
         } else {
-            outStock.push({
-                product,
-                quantity
-            });
+          outStock.push({ product, quantity });
         }
-    });
-}
-    const ticket = await generatePurchase(user, amount);
-    //actulizar el carrito con el nuevo arreglo de productos que no pudieron comprarse
+      });
 
-
-    if (outStock.length > 0) {
-        const message = `Los siguientes productos no pudieron ser comprados porque no hay stock suficiente:
-
-${outStock.map(({ product }) => product.name).join(', ')}`;
-
-        await notifyUser(user, message);
+      const ticket = await generatePurchase(user, amount);
+  
+  
+      // Actualizar carrito
+      await cartRepo.updateProducts(cid, outStock);
+  
+      // Notificar usuario (si hay productos sin stock)
+      if (outStock.length > 0) {
+        await notifyUser(user, `Los siguientes productos no pudieron ser comprados porque no hay stock suficiente:\n${outStock.map(({ product }) => product.name).join('\n')}`);
+      }
+  
+      // Confirmar transacción
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error; // Relanzar el error para que sea manejado en otro lado
+    } finally {
+      session.endSession();
     }
-
-    await cartRepo.updateProducts(cid, outStock);
-
-    await session.commitTransaction();
-
-    //catch
-    await session.abortTransaction();
-    //finally
-    session.endSession();
-}
+  };
 
 export {
     getAllCarts,

@@ -186,7 +186,7 @@ const getCurrentUser = (req, res) => {
             return res.status(401).json({ error: 'Usuario no autenticado' });
         }
 
-        const { first_name, last_name, age } = req.user; // Suponiendo que los datos del usuario están en req.user
+        const { first_name, last_name, age } = req.user; 
 
         // Verifica si existen name y lastname antes de crear la instancia de infoDto
         if (!first_name, !last_name) {

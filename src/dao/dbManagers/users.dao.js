@@ -14,6 +14,11 @@ export default class Users {
         const result = await usersModel.create(user);
         return result; 
     }
+
+    getUserById = async (id) => {
+        const result = await usersModel.findById({ _id: id}).lean();
+        return result;
+    }
     
     addCartToUser = async (userId, cartId) => {
         try {

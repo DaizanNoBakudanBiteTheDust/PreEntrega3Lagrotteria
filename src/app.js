@@ -1,5 +1,6 @@
 //dependencias
-import express from 'express';
+import express from 'express';  
+import cors from 'cors';
 import handlebars from 'express-handlebars';
 import mongoose from 'mongoose';
 import {
@@ -71,6 +72,7 @@ app.use(express.urlencoded({
         extended: true
 }));
 app.use(cookieParser());
+app.use(cors());
 
 
 // handlebars
