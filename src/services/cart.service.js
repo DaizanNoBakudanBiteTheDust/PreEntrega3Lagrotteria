@@ -63,6 +63,8 @@ const purchase = async (cid, user) => {
 
            // Obtener carrito
       const cart = user.carts[0].cart;
+
+      console.log(cart)
       // Transacciones
 
       if (!cart) {
@@ -107,12 +109,18 @@ const purchase = async (cid, user) => {
 
       await transporter.sendMail({
         from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
-        to: user, // Dirección de correo del usuario
+        to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
         subject: 'Ticket de compra',
         html: formattedTicket // Puedes personalizar el formato del correo
       });
 
       console.log(ticket)
+
+
+      //vaciar carrito
+
+        await cartRepo.emptycart(cid)
+      
 
       // Confirmar transacción
       await session.commitTransaction();
@@ -122,10 +130,6 @@ const purchase = async (cid, user) => {
     } finally {
       session.endSession();
     }
-
-
-  // Vaciar carrito
-  cart.products = [];
 
 
   };

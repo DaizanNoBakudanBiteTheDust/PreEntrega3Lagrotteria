@@ -70,4 +70,22 @@ export default class Carts {
         } 
         return product;
     }
+
+    emptyCart = async (id) => {
+        try {
+            const cart = await cartsModel.findById(id);
+
+            if (!cart) {
+                throw new Error('Carrito no encontrado');
+            }
+
+            cart.products = []; // Asumiendo que hay una propiedad 'products' que contiene los productos del carrito
+
+            await cart.save();
+            return { status: 200, message: 'Carrito vaciado exitosamente', cart };
+        } catch (error) {
+            return { status: error.status || 500, error: error.message };
+        }
+    }
+
 }

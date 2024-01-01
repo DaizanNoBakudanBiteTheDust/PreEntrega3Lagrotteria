@@ -7,7 +7,7 @@ function purchaseCart() { // Recibe cartId como parámetro
 
     fetch(`/api/carts/${cartId}/purchase`, {
         method: 'POST',
-        body: JSON.stringify({obj}),
+        body: JSON.stringify(obj),
         headers: {
             'Content-Type': 'application/json'
         }
@@ -16,7 +16,7 @@ function purchaseCart() { // Recibe cartId como parámetro
         if (result.status === 200 || result.status === 201) {
             console.log("bien")
         }else{
-           console.log("fallo")
+           console.log(result.status, "fallo")
         }
     })
     .catch(error => {

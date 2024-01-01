@@ -20,7 +20,7 @@ async function addProduct(pid, cartId) {
 
          // Buscar el producto en el carrito por el ID del producto
          const existingProductIndex = cartData.products.find(p => p.product._id.toString() === pid);
-    
+         
 
         if (existingProductIndex) {
             // Si el producto ya existe en el carrito, incrementa la cantidad
@@ -35,14 +35,9 @@ async function addProduct(pid, cartId) {
        };
        
        // Agrega el producto al arreglo "products" del carrito
-       cartData.products.push(addedProduct);
+       await cartData.products.push(addedProduct);
      }
- 
-     Toastify({
-        text: `tu producto ha sido agregado al carrito`,
-        gravity: "bottom",
-        duration: 3000
-    }).showToast();
+
  
          // Realizar una solicitud fetch para actualizar el carrito
          const updateResponse = await fetch(`/api/carts/${cartId}`, {
@@ -55,6 +50,12 @@ async function addProduct(pid, cartId) {
          if (updateResponse.status === 200) {
              console.log('Producto añadido al carrito', cartData);
          };
+
+         Toastify({
+            text: `tu producto ha sido agregado al carrito`,
+            gravity: "bottom",
+            duration: 3000
+        }).showToast();
 
      
     } catch (error) {

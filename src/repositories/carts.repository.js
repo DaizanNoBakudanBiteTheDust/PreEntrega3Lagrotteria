@@ -38,4 +38,9 @@ export default class cartsRepository {
         const result = await daoCarts.deleteProductById(id, cart);
         return result;
     }
+
+    emptycart = async(id) => {
+        const result = await daoCarts.emptyCart(id);
+        return result;
+    }
 }
