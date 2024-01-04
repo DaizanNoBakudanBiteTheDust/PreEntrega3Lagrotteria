@@ -81,7 +81,8 @@ const saveProductOnCart = async (req, res) => {
             // Agrega el producto al arreglo "products" del carrito
             cart.products.push(addedProduct);
         }
-
+        
+        
         // Actualiza el carrito con los cambios
         await cartUpdate(cid, cart);
 

@@ -28,10 +28,8 @@ async function addProduct(pid, cartId) {
         } else {
        // Crea un nuevo objeto de producto utilizando el ID del producto
        const addedProduct = {
-         product: {
-           _id: pid,
+         product: pid,
            quantity: 1
-         }
        };
        
        // Agrega el producto al arreglo "products" del carrito
@@ -40,7 +38,7 @@ async function addProduct(pid, cartId) {
 
  
          // Realizar una solicitud fetch para actualizar el carrito
-         const updateResponse = await fetch(`/api/carts/${cartId}`, {
+         const updateResponse = await fetch(`/api/carts/${cartId}git`, {
              method: 'PUT',
              headers: {
                  'Content-Type': 'application/json'
