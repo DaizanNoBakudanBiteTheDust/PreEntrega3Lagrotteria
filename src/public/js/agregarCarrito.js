@@ -38,7 +38,7 @@ async function addProduct(pid, cartId) {
 
  
          // Realizar una solicitud fetch para actualizar el carrito
-         const updateResponse = await fetch(`/api/carts/${cartId}git`, {
+         const updateResponse = await fetch(`/api/carts/${cartId}`, {
              method: 'PUT',
              headers: {
                  'Content-Type': 'application/json'
