@@ -53,20 +53,106 @@ const cartDeleteProduct = async (id, cart) => {
 
 //compra
 
-const purchase = async (cid, user) => {
-    try {
-      const session = await mongoose.startSession();
-      session.startTransaction();  
+// const purchase = async (cid, user) => {
 
-      console.log(user)
-      console.log(cid)
+//     let session = null;
+
+//     try {
+//         session = await mongoose.startSession();
+//         console.log(session)
+//         session.startTransaction();
+
+//            // Obtener carrito
+//       const cart = user.carts[0].cart;
+//       console.log(cart)
+//       // Transacciones
+
+//       if (!cart) {
+//         console.log("carrito no encontrado")
+//       }else{
+//         console.log("carrito encontrado")
+//       }
+  
+//       // Procesar productos
+//       let amount = 0;
+//       const outStock = [];
+
+//       console.log(cart.products)
+
+//       for (const { product, quantity } of cart.products) {
+//         if (product.stock >= quantity) {
+//           amount += product.precio * quantity;
+//           product.stock -= quantity;
+//           await productRepo.updateById(product._id);
+//         } else {
+//           outStock.push({ product, quantity });
+//         }
+//       }
+
+//       const ticket = await generatePurchase(user, amount);
+
+//       const transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         port: 587,
+//         auth: {
+//             user: 'gabriellagrotteria18@gmail.com',
+//             pass: 'vfkdolrcdjbivjfg'
+//         }
+//       });
+
+//       const formattedTicket = `
+//       <h3>Tu ticket de compra</h3>
+//       <p>Código: ${ticket.code}</p>
+//       <p>Fecha de compra: ${ticket.purchase_datetime}</p>
+//       <p>Monto: $${ticket.amount}</p>
+//       <p>Comprador: ${ticket.purchaser}</p>
+//   `;
+
+//       await transporter.sendMail({
+//         from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
+//         to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
+//         subject: 'Ticket de compra',
+//         html: formattedTicket // Puedes personalizar el formato del correo
+//       });
+
+//       console.log(ticket)
+
+
+//       //vaciar carrito
+
+//         await cartRepo.emptycart(cid)
+      
+
+//       // Confirmar transacción
+//       await session.commitTransaction();
+//     } catch (error) {
+//         if (session) {
+//             await session.abortTransaction();
+//         }
+//         throw error;
+//     } finally {
+//         if (session) {
+//             session.endSession();
+//         }
+//     }
+
+
+//   };
+
+  const purchase = async (cid, user) => {
+
+    let session = null;
+
+    try {
+        session = await mongoose.startSession();
+        console.log(session)
+        session.startTransaction();
 
            // Obtener carrito
       const cart = user.carts[0].cart;
-
+      console.log(cid)
       console.log(cart)
       // Transacciones
-
       if (!cart) {
         console.log("carrito no encontrado")
       }else{
@@ -77,17 +163,20 @@ const purchase = async (cid, user) => {
       let amount = 0;
       const outStock = [];
 
-      cart.products.forEach(async ({ product, quantity }) => {
+      for (const { product, quantity } of cart.products) {
         if (product.stock >= quantity) {
-          amount += product.precio * quantity;
-          product.stock -= quantity;
-          await productRepo.updateById(product._id);
+            amount += product.precio * quantity;
+            product.stock -= quantity;
+            await productRepo.updateById(product._id);
         } else {
-          outStock.push({ product, quantity });
+            outStock.push({ product, quantity });
         }
-      });
+    }
 
-      
+    if (outStock.length > 0) {
+      console.log("Algunos productos están fuera de stock:", outStock);
+    }
+
       const ticket = await generatePurchase(user, amount);
 
       const transporter = nodemailer.createTransport({
@@ -109,26 +198,27 @@ const purchase = async (cid, user) => {
 
       await transporter.sendMail({
         from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
-        to: user, // Dirección de correo del usuario
+        to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
         subject: 'Ticket de compra',
         html: formattedTicket // Puedes personalizar el formato del correo
       });
 
       console.log(ticket)
 
-
-      //vaciar carrito
-
-        await cartRepo.emptycart(cid)
-      
-
       // Confirmar transacción
       await session.commitTransaction();
+
+      await cartRepo.emptycart(cid)
     } catch (error) {
-      await session.abortTransaction();
-      throw error; // Relanzar el error para que sea manejado en otro lado
+        if (session) {
+            await session.abortTransaction();
+        }
+        throw error;
     } finally {
-      session.endSession();
+        if (session) {  
+            session.endSession();
+        }
+
     }
 
 

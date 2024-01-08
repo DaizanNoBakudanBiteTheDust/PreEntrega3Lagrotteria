@@ -332,15 +332,16 @@ const cartPurchase = async (req, res) => {
 
             const user = decodedcookie;
 
-            console.log(user)
-
             //CID LO OBTIENE
                
             const result = await purchase(cid, user);
+
+            console.log(result)
             
             res.send({ result });
         } catch (error) {
-            res.status(500).send()
+                console.log('Error en la compra:', error);
+                res.status(500).send({ error: 'Error en la compra' });
         }
     }
 
