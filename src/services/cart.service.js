@@ -145,13 +145,11 @@ const cartDeleteProduct = async (id, cart) => {
 
     try {
         session = await mongoose.startSession();
-        console.log(session)
         session.startTransaction();
 
            // Obtener carrito
       const cart = user.carts[0].cart;
-      console.log(cid)
-      console.log(cart)
+      console.log(cart.products)
       // Transacciones
       if (!cart) {
         console.log("carrito no encontrado")
@@ -163,15 +161,26 @@ const cartDeleteProduct = async (id, cart) => {
       let amount = 0;
       const outStock = [];
 
-      for (const { product, quantity } of cart.products) {
-        if (product.stock >= quantity) {
-            amount += product.precio * quantity;
-            product.stock -= quantity;
-            await productRepo.updateById(product._id);
-        } else {
-            outStock.push({ product, quantity });
+      await Promise.all(cart.products.map(async ({ product, quantity }) => {
+
+        try {
+            if (product.stock >= quantity) {
+                const amountForProduct = product.precio * quantity;
+                amount += amountForProduct;
+                
+                product.stock -= quantity;
+                await productRepo.updateStock(product._id, product.stock);
+    
+                console.log(`Updated stock for product ${product._id}. New stock: ${product.stock}`);
+            } else {
+                outStock.push({ product, quantity });
+                console.log(`Product ${product._id} is out of stock.`);
+            }
+        } catch (error) {
+            console.error(`Error processing product ${product._id}:`, error);
+            // Manejar el error apropiadamente, ya sea lanzando una excepción o realizando alguna acción específica
         }
-    }
+      }));
 
     if (outStock.length > 0) {
       console.log("Algunos productos están fuera de stock:", outStock);
@@ -204,11 +213,11 @@ const cartDeleteProduct = async (id, cart) => {
       });
 
       console.log(ticket)
+      //await cartRepo.emptycart(cid)
 
       // Confirmar transacción
       await session.commitTransaction();
 
-      await cartRepo.emptycart(cid)
     } catch (error) {
         if (session) {
             await session.abortTransaction();

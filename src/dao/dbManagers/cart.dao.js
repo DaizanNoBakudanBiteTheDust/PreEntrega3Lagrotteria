@@ -81,6 +81,7 @@ export default class Carts {
 
             cart.products = []; // Asumiendo que hay una propiedad 'products' que contiene los productos del carrito
 
+            await cart.save();
             return { status: 200, message: 'Carrito vaciado exitosamente', cart };
         } catch (error) {
             return { status: error.status || 500, error: error.message };

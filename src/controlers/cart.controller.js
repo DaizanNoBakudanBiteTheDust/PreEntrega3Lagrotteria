@@ -335,8 +335,6 @@ const cartPurchase = async (req, res) => {
             //CID LO OBTIENE
                
             const result = await purchase(cid, user);
-
-            console.log(result)
             
             res.send({ result });
         } catch (error) {

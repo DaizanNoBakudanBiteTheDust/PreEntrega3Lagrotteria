@@ -10,7 +10,7 @@ export default class productsRepository {
 
     updateStock = async(id, newStockValue) => {
         try {
-            const result = await daoProducts.updateStockById(id, newStockValue);
+            const result = await daoProducts.updateStock(id, newStockValue);
             console.log('Resultado de la actualización:', result);
             return result;
         } catch (error) {

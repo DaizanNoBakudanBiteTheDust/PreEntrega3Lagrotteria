@@ -88,9 +88,10 @@ export default class Products {
         }
     }
 
-    updateStock = async(id, newStockValue) => {
+    updateStock = async (id, newStockValue) => {
         try {
-            const result = await daoProducts.updateStockById(id, newStockValue);
+            // Realizar la lógica para actualizar el stock del producto con el ID proporcionado
+            const result = await productsModel.findByIdAndUpdate({_id: id}, { stock: newStockValue });
             console.log('Resultado de la actualización:', result);
             return result;
         } catch (error) {
@@ -98,4 +99,5 @@ export default class Products {
             throw error; // Relanzar el error para que sea manejado en otro lugar si es necesario
         }
     };
+    
 }
