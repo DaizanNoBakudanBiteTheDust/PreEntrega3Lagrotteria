@@ -114,9 +114,9 @@ const purchase = async (cid, user) => {
 
     await transporter.sendMail({
       from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
-      to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
+      to: user, // Dirección de correo del usuario
       subject: 'Ticket de compra',
-      html: formattedTicket // Puedes personalizar el formato del correo
+      html: formattedTicket 
     });
 
     // Confirmar transacción
