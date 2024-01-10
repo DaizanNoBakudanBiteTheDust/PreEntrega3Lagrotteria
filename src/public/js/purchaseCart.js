@@ -13,11 +13,19 @@ function purchaseCart() { // Recibe cartId como parámetro
         }
     })
     .then(result => {
-        if (result.status === 200 || result.status === 201) {
-            console.log("bien")
-        }else{
-           console.log(result.status, "fallo")
+        if (!result.ok) {
+            Swal.fire({
+                icon: 'error',
+                title: "No se ha podido procesar tu compra"
+              });
+              return
         }
+
+        Swal.fire({
+            title: "Carrito Procesado correctamente",
+            text: "recibiras un correo con el detalle de tu compra",
+          });
+          setInterval("location.reload()",10000);
     })
     .catch(error => {
       console.log(error);

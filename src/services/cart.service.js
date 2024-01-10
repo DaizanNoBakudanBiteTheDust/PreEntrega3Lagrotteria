@@ -92,13 +92,10 @@ const purchase = async (cid, user) => {
         if (product.stock >= quantity) {
           const amountForProduct = product.precio * quantity;
           amount += amountForProduct;
+          let stock = product.stock - quantity
           // Actualizar stock
-          productsToUpdate.push({
-            _id: product._id,
-            $set: {
-                stock: product.stock - quantity
-            }
-        });
+          await productRepo.updateStock(product._id, stock)
+
         } else {
           outStock.push({
             product,

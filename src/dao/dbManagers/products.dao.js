@@ -91,7 +91,7 @@ export default class Products {
     updateStock = async (id, newStockValue) => {
         try {
             // Realizar la lógica para actualizar el stock del producto con el ID proporcionado
-            const result = await productsModel.findByIdAndUpdate({_id: id}, { stock: newStockValue });
+            const result = await productsModel.findByIdAndUpdate({_id: id}, { stock: newStockValue}, {new: true});
             console.log('Resultado de la actualización:', result);
             return result;
         } catch (error) {
