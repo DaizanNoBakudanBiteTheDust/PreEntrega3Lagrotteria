@@ -5,6 +5,7 @@ const daoProducts = new Products();
 export default class productsRepository {
     updateById = async(id) => {
         const result = await daoProducts.getProductById(id);
+        console.log(result)
         return result;
     }
 

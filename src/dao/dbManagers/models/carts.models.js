@@ -28,7 +28,7 @@ const cartsSchema = new mongoose.Schema({
 
 });
 
-cartsSchema.pre(['find', 'findOne', 'findById', 'findByIdAndUpdate'], function () {
+cartsSchema.pre(['find', 'findOne', 'findById', 'findOneAndUpdate', 'findByIdAndUpdate', 'update', 'findByIdAndReturnDocument'], function () {
     this.populate('products.product');
 });
 

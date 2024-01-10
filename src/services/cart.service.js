@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import cartsRepository from '../repositories/carts.repository.js';
 import productsRepository from '../repositories/products.repository.js';
-import {generatePurchase} from './tickets.service.js';
+import {
+  generatePurchase
+} from './tickets.service.js';
 import nodemailer from 'nodemailer';
 
 
@@ -9,195 +11,126 @@ const cartRepo = new cartsRepository();
 const productRepo = new productsRepository();
 
 const getAllCarts = async () => {
-    const carts = await cartRepo.getAll();
+  const carts = await cartRepo.getAll();
 
-    return carts;
+  return carts;
 }
 
 const saveCart = async (cart) => {
-    const saveCarts = await cartRepo.save(cart);
+  const saveCarts = await cartRepo.save(cart);
 
-    return saveCarts;
+  return saveCarts;
 }
 
 const cartUpdate = async (id, cart) => {
-    const updateCarts = await cartRepo.updateProducts(id, cart);
+  const updateCarts = await cartRepo.updateProducts(id, cart);
 
-    return updateCarts;
+  return updateCarts;
 }
 
 const cartDelete = async (id, cart) => {
-    const deleteCarts = await cartRepo.delete(id, cart);
+  const deleteCarts = await cartRepo.delete(id, cart);
 
-    return deleteCarts;
+  return deleteCarts;
 }
 
 const cartById = async (id) => {
-    const idCarts = await cartRepo.findById(id);
+  const idCarts = await cartRepo.findById(id);
 
-    return idCarts;
+  return idCarts;
 }
 
 const cartProductId = async (id) => {
-    const productCarts = await cartRepo.productById(id);
+  const productCarts = await cartRepo.productById(id);
 
-    return productCarts;
+  return productCarts;
 }
 
 
 const cartDeleteProduct = async (id, cart) => {
-    const deleteProductCarts = await cartRepo.deleteProductById(id, cart);
+  const deleteProductCarts = await cartRepo.deleteProductById(id, cart);
 
-    return deleteProductCarts;
+  return deleteProductCarts;
 }
 
-//compra
+const purchase = async (cid, user) => {
 
-// const purchase = async (cid, user) => {
+  let session = null;
 
-//     let session = null;
+  try {
+    session = await mongoose.startSession();
+    session.startTransaction();
 
-//     try {
-//         session = await mongoose.startSession();
-//         console.log(session)
-//         session.startTransaction();
+    // Obtener carrito
+    const cart = user.carts[0].cart;
 
-//            // Obtener carrito
-//       const cart = user.carts[0].cart;
-//       console.log(cart)
-//       // Transacciones
+    const cid = cart._id;
 
-//       if (!cart) {
-//         console.log("carrito no encontrado")
-//       }else{
-//         console.log("carrito encontrado")
-//       }
-  
-//       // Procesar productos
-//       let amount = 0;
-//       const outStock = [];
-
-//       console.log(cart.products)
-
-//       for (const { product, quantity } of cart.products) {
-//         if (product.stock >= quantity) {
-//           amount += product.precio * quantity;
-//           product.stock -= quantity;
-//           await productRepo.updateById(product._id);
-//         } else {
-//           outStock.push({ product, quantity });
-//         }
-//       }
-
-//       const ticket = await generatePurchase(user, amount);
-
-//       const transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         port: 587,
-//         auth: {
-//             user: 'gabriellagrotteria18@gmail.com',
-//             pass: 'vfkdolrcdjbivjfg'
-//         }
-//       });
-
-//       const formattedTicket = `
-//       <h3>Tu ticket de compra</h3>
-//       <p>Código: ${ticket.code}</p>
-//       <p>Fecha de compra: ${ticket.purchase_datetime}</p>
-//       <p>Monto: $${ticket.amount}</p>
-//       <p>Comprador: ${ticket.purchaser}</p>
-//   `;
-
-//       await transporter.sendMail({
-//         from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
-//         to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
-//         subject: 'Ticket de compra',
-//         html: formattedTicket // Puedes personalizar el formato del correo
-//       });
-
-//       console.log(ticket)
-
-
-//       //vaciar carrito
-
-//         await cartRepo.emptycart(cid)
-      
-
-//       // Confirmar transacción
-//       await session.commitTransaction();
-//     } catch (error) {
-//         if (session) {
-//             await session.abortTransaction();
-//         }
-//         throw error;
-//     } finally {
-//         if (session) {
-//             session.endSession();
-//         }
-//     }
-
-
-//   };
-
-  const purchase = async (cid, user) => {
-
-    let session = null;
-
-    try {
-        session = await mongoose.startSession();
-        session.startTransaction();
-
-           // Obtener carrito
-      const cart = user.carts[0].cart;
-      console.log(cart.products)
-      // Transacciones
-      if (!cart) {
-        console.log("carrito no encontrado")
-      }else{
-        console.log("carrito encontrado")
-      }
-  
-      // Procesar productos
-      let amount = 0;
-      const outStock = [];
-
-      await Promise.all(cart.products.map(async ({ product, quantity }) => {
-
-        try {
-            if (product.stock >= quantity) {
-                const amountForProduct = product.precio * quantity;
-                amount += amountForProduct;
-                
-                product.stock -= quantity;
-                await productRepo.updateStock(product._id, product.stock);
-    
-                console.log(`Updated stock for product ${product._id}. New stock: ${product.stock}`);
-            } else {
-                outStock.push({ product, quantity });
-                console.log(`Product ${product._id} is out of stock.`);
-            }
-        } catch (error) {
-            console.error(`Error processing product ${product._id}:`, error);
-            // Manejar el error apropiadamente, ya sea lanzando una excepción o realizando alguna acción específica
-        }
-      }));
-
-    if (outStock.length > 0) {
-      console.log("Algunos productos están fuera de stock:", outStock);
+    console.log(cart);
+    console.log(cid);
+    // Transacciones
+    if (!cart) {
+      console.log("carrito no encontrado")
+    } else {
+      console.log("carrito encontrado")
     }
 
-      const ticket = await generatePurchase(user, amount);
+    // Procesar productos
+    let amount = 0;
+    const outStock = [];
 
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        port: 587,
-        auth: {
-            user: 'gabriellagrotteria18@gmail.com',
-            pass: 'vfkdolrcdjbivjfg'
+
+    console.log("Estado del carrito antes de procesar productos:", cart);
+    await Promise.all(cart.products.map(async ({
+      product,
+      quantity
+    }) => {
+
+      try {
+        if (product.stock >= quantity) {
+          const amountForProduct = product.precio * quantity;
+          amount += amountForProduct;
+
+          // Actualizar stock
+          const updatedProduct = await product.updateOne({
+            _id: product._id,
+          }, {
+            $set: {
+              stock: product.stock - quantity
+            }
+          });
+
+          console.log(`Updated stock for product ${product._id}. New stock: ${updatedProduct.stock}`);
+
+        } else {
+          outStock.push({
+            product,
+            quantity
+          });
+          console.log(`Product ${product._id} is out of stock.`);
         }
-      });
+      } catch (error) {
+        console.error(`Error processing product ${product._id}:`, error);
+        // Manejar el error apropiadamente, ya sea lanzando una excepción o realizando alguna acción específica
+      }
+    }));
 
-      const formattedTicket = `
+    if (outStock.length > 0) {
+      alert("Algunos productos están fuera de stock:", outStock);
+    }
+
+    const ticket = await generatePurchase(user, amount);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      port: 587,
+      auth: {
+        user: 'gabriellagrotteria18@gmail.com',
+        pass: 'vfkdolrcdjbivjfg'
+      }
+    });
+
+    const formattedTicket = `
       <h3>Tu ticket de compra</h3>
       <p>Código: ${ticket.code}</p>
       <p>Fecha de compra: ${ticket.purchase_datetime}</p>
@@ -205,41 +138,42 @@ const cartDeleteProduct = async (id, cart) => {
       <p>Comprador: ${ticket.purchaser}</p>
   `;
 
-      await transporter.sendMail({
-        from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
-        to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
-        subject: 'Ticket de compra',
-        html: formattedTicket // Puedes personalizar el formato del correo
-      });
+    await transporter.sendMail({
+      from: 'gabriellagrotteria18@gmail.com', // Reemplaza con el remitente deseado
+      to: 'gabriellagrotteria18@gmail.com', // Dirección de correo del usuario
+      subject: 'Ticket de compra',
+      html: formattedTicket // Puedes personalizar el formato del correo
+    });
 
-      console.log(ticket)
-      //await cartRepo.emptycart(cid)
+    console.log(ticket)
 
-      // Confirmar transacción
-      await session.commitTransaction();
+    // Confirmar transacción
+    await session.commitTransaction();
 
-    } catch (error) {
-        if (session) {
-            await session.abortTransaction();
-        }
-        throw error;
-    } finally {
-        if (session) {  
-            session.endSession();
-        }
+    await cartRepo.emptycart(cid);
 
+  } catch (error) {
+    if (session) {
+      await session.abortTransaction();
+    }
+    console.log("Error durante la compra:", error);
+    throw error;
+  } finally {
+    if (session) {
+      session.endSession();
     }
 
+  }
 
-  };
+};
 
 export {
-    getAllCarts,
-    saveCart,
-    cartDelete,
-    cartUpdate,
-    cartById,
-    cartProductId,
-    cartDeleteProduct,
-    purchase
+  getAllCarts,
+  saveCart,
+  cartDelete,
+  cartUpdate,
+  cartById,
+  cartProductId,
+  cartDeleteProduct,
+  purchase
 }
