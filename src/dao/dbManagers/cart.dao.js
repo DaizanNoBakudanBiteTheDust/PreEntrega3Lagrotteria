@@ -73,24 +73,25 @@
 
         async emptyCart(id) {
             try {
-                const cart = await cartsModel.findById(id);
-        
-                if (!cart) {
-                    throw new Error('Carrito no encontrado');
-                }
-        
-                console.log("Estado del carrito antes de la actualización:", cart);
-        
-                cart.products = []; // Asumiendo que hay una propiedad 'products' que contiene los productos del carrito
-        
-                // Actualizar el carrito usando la función update del model
-        
-                console.log("Estado del carrito después de la actualización:", result.value);
-        
-                return { status: 200, message: 'Carrito vaciado exitosamente', cart: result.value };
-        
+              const cart = await cartsModel.findById(id);
+          
+              if (!cart) {
+                throw new Error('Carrito no encontrado');
+              }
+          
+              console.log("Estado del carrito antes de la actualización:", cart);
+          
+              cart.products = []; // Asumiendo que hay una propiedad 'products' que contiene los productos del carrito
+          
+              // Actualizar el carrito usando la función update del model
+              const updatedCart = await cart.save();
+          
+              console.log("Estado del carrito después de la actualización:", updatedCart);
+          
+              return { status: 200, message: 'Carrito vaciado exitosamente', cart: updatedCart };
+          
             } catch (error) {
-                return { status: error.status || 500, error: error.message };
+              return { status: error.status || 500, error: error.message };
             }
-        }
+          }
     }

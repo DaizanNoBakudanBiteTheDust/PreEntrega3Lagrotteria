@@ -62,12 +62,11 @@ const purchase = async (cid, user) => {
     session.startTransaction();
 
     // Obtener carrito
-    const cart = user.carts[0].cart;
 
-    const cid = cart._id;
+    const cart = await cartRepo.findById(cid);
 
     console.log(cart);
-    console.log(cid);
+
     // Transacciones
     if (!cart) {
       console.log("carrito no encontrado")
@@ -81,27 +80,25 @@ const purchase = async (cid, user) => {
 
 
     console.log("Estado del carrito antes de procesar productos:", cart);
+
+
+    const productsToUpdate = [];
+
     await Promise.all(cart.products.map(async ({
       product,
       quantity
     }) => {
-
-      try {
+      
         if (product.stock >= quantity) {
           const amountForProduct = product.precio * quantity;
           amount += amountForProduct;
-
           // Actualizar stock
-          const updatedProduct = await product.updateOne({
+          productsToUpdate.push({
             _id: product._id,
-          }, {
             $set: {
-              stock: product.stock - quantity
+                stock: product.stock - quantity
             }
-          });
-
-          console.log(`Updated stock for product ${product._id}. New stock: ${updatedProduct.stock}`);
-
+        });
         } else {
           outStock.push({
             product,
@@ -109,15 +106,9 @@ const purchase = async (cid, user) => {
           });
           console.log(`Product ${product._id} is out of stock.`);
         }
-      } catch (error) {
-        console.error(`Error processing product ${product._id}:`, error);
-        // Manejar el error apropiadamente, ya sea lanzando una excepción o realizando alguna acción específica
-      }
+    
     }));
 
-    if (outStock.length > 0) {
-      alert("Algunos productos están fuera de stock:", outStock);
-    }
 
     const ticket = await generatePurchase(user, amount);
 
@@ -149,6 +140,9 @@ const purchase = async (cid, user) => {
 
     // Confirmar transacción
     await session.commitTransaction();
+
+  
+    await productRepo.updateById()
 
     await cartRepo.emptycart(cid);
 
